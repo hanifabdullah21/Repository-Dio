@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 
 class HiveHelper {
-  static const hiveAppName = "your_app_name";
+  static const hiveAppName = "RepositoryDioByHanifAbdullah";
   static const hiveIsLoggedIn = "isLoggedIn";
   static const hiveToken = "token";
   static const hiveRefreshToken = "refresh_token";

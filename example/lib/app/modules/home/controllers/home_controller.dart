@@ -8,20 +8,35 @@ class HomeController extends GetxController {
 
   final result = "".obs;
 
-  testGet() {}
+  testGet() {
+    repository.get<ExampleModel, ExampleModel>(
+      options: RepositoryOptions(
+        endpoint: "api/test-get",
+        query: {"success": true},
+        data: {},
+        mapperObject: ExampleModel.fromJson,
+        onLoading: (data, isLoading) {},
+        onSuccess: (data) {},
+        onError: (data) {},
+        onSendProgress: (count, total) {},
+        onReceiveProgress: (count, total) {},
+      ),
+    );
+  }
 
   testListGet() {
     repository.get<List<ExampleModel>, ExampleModel>(
       options: RepositoryOptions(
-          endpoint: "api/test-get-list",
-          query: {"success": true},
-          mapperObjectFromList: ExampleModel.fromJson,
-          onSuccess: (data) {
-            result.value = "${data.data}";
-          },
-          onError: (data) {
-            result.value = "${data.failure?.msgShow}";
-          }),
+        endpoint: "api/test-get-list",
+        query: {"success": true},
+        data: {},
+        mapperObjectFromList: ExampleModel.fromJson,
+        onLoading: (data, isLoading) {},
+        onSuccess: (data) {},
+        onError: (data) {},
+        onSendProgress: (count, total) {},
+        onReceiveProgress: (count, total) {},
+      ),
     );
   }
 }
