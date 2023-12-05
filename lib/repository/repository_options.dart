@@ -9,6 +9,7 @@ class RepositoryOptions<L, O> {
   Map<String, dynamic>? data;
   L Function(Map<String, dynamic>)? mapperObject;
   O Function(Map<String, dynamic>)? mapperObjectFromList;
+  L Function(Iterable<dynamic>)? mapperObjectFromListPrimitive;
   Function(StatusRequestModel<L> result, bool isLoading)? onLoading;
   Function(StatusRequestModel<L> result)? onSuccess;
   Function(StatusRequestModel<L> result)? onError;
@@ -30,6 +31,7 @@ class RepositoryOptions<L, O> {
     this.query,
     this.data,
     this.mapperObjectFromList,
+    this.mapperObjectFromListPrimitive,
     this.mapperObject,
     this.onLoading,
     this.onSuccess,

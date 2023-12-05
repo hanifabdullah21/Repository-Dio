@@ -48,7 +48,7 @@ runApp(
 
 ### Cara Penggunaan
 
-Terdapat 2 penggunaan untuk modul ini :
+Terdapat 3 penggunaan untuk modul ini :
 
 1. Jika respon yang diinginkan berupa `List`
 
@@ -79,6 +79,25 @@ repository.get<ExampleModel, ExampleModel>(
         query: {},
         data: {},
         mapperObject: ExampleModel.fromJson,
+        onLoading: (data, isLoading) {},
+        onSuccess: (data) {},
+        onError: (data) {},
+        onSendProgress: (count, total) {},
+        onReceiveProgress: (count, total) {},
+      ),
+    );
+```
+
+3. Jika respon yang diinginkan berupa `List` Primitive : `List<String>` , `List<int>` dan `List<double>`
+
+```dart
+Repository repository = Get.find();
+repository.get<ExampleModel, ExampleModel>(
+      options: RepositoryOptions(
+        endpoint: "",
+        query: {},
+        data: {},
+        mapperObjectFromListPrimitive: List<String>.from,
         onLoading: (data, isLoading) {},
         onSuccess: (data) {},
         onError: (data) {},

@@ -69,6 +69,7 @@ class Repository {
         response: response,
         mapperObject: options.mapperObject,
         mapperObjectFromList: options.mapperObjectFromList,
+        mapperObjectFromListPrimitive: options.mapperObjectFromListPrimitive,
         onLoading: options.onLoading,
         onSuccess: options.onSuccess,
         onError: options.onError,
@@ -112,6 +113,7 @@ class Repository {
         response: response,
         mapperObject: options.mapperObject,
         mapperObjectFromList: options.mapperObjectFromList,
+        mapperObjectFromListPrimitive: options.mapperObjectFromListPrimitive,
         onLoading: options.onLoading,
         onSuccess: options.onSuccess,
         onError: options.onError,
@@ -155,6 +157,7 @@ class Repository {
         response: response,
         mapperObject: options.mapperObject,
         mapperObjectFromList: options.mapperObjectFromList,
+        mapperObjectFromListPrimitive: options.mapperObjectFromListPrimitive,
         onLoading: options.onLoading,
         onSuccess: options.onSuccess,
         onError: options.onError,
@@ -196,6 +199,7 @@ class Repository {
         response: response,
         mapperObject: options.mapperObject,
         mapperObjectFromList: options.mapperObjectFromList,
+        mapperObjectFromListPrimitive: options.mapperObjectFromListPrimitive,
         onLoading: options.onLoading,
         onSuccess: options.onSuccess,
         onError: options.onError,
@@ -240,6 +244,7 @@ class Repository {
         response: response,
         mapperObject: options.mapperObject,
         mapperObjectFromList: options.mapperObjectFromList,
+        mapperObjectFromListPrimitive: options.mapperObjectFromListPrimitive,
         onLoading: options.onLoading,
         onSuccess: options.onSuccess,
         onError: options.onError,
@@ -259,6 +264,7 @@ class Repository {
     required Response<dynamic> response,
     L Function(Map<String, dynamic>)? mapperObject,
     O Function(Map<String, dynamic>)? mapperObjectFromList,
+    L Function(Iterable<dynamic>)? mapperObjectFromListPrimitive,
     Function(StatusRequestModel<L> result, bool isLoading)? onLoading,
     Function(StatusRequestModel<L> result)? onSuccess,
     Function(StatusRequestModel<L> result)? onError,
@@ -273,24 +279,44 @@ class Repository {
     if (data.success == true) {
       /// Cek apakah hasil yang diinginkan berupa [List] atau [Object]
       if (L == List<O>) {
-        /// Cek mapperObjectFromList null atau tidak
-        var checkMapper = _checkMapper<L, O>(
-            type: 1,
-            mapperObjectFromList: mapperObjectFromList,
-            onError: onError);
+        if ((L == List<String>) || (List<int> == L) || (L == List<double>)) {
+          var checkMapper = _checkMapper<L, O>(
+              type: 3,
+              mapperObjectFromListPrimitive: mapperObjectFromListPrimitive,
+              onError: onError);
 
-        /// Jika mengembalikan null, maka sudah sesuai syarat
-        if (checkMapper != null) {
-          return checkMapper;
-        }
+          /// Jika mengembalikan null, maka sudah sesuai syarat
+          if (checkMapper != null) {
+            return checkMapper;
+          }
+          var result =
+              mapperObjectFromListPrimitive!((data.data).map((u) => u));
+          statusRequestModel =
+              StatusRequestModel<L>.success(result, message: data.message);
+          if (onSuccess != null) {
+            onSuccess(statusRequestModel);
+          }
+        } else {
+          /// Cek mapperObjectFromList null atau tidak
+          var checkMapper = _checkMapper<L, O>(
+              type: 1,
+              mapperObjectFromList: mapperObjectFromList,
+              onError: onError);
 
-        /// Uraikan data menjadi sebuah hasil yang diinginkan [List<O>]
-        var result =
-            List<O>.from((data.data).map((u) => mapperObjectFromList!(u))) as L;
-        statusRequestModel =
-            StatusRequestModel<L>.success(result, message: data.message);
-        if (onSuccess != null) {
-          onSuccess(statusRequestModel);
+          /// Jika mengembalikan null, maka sudah sesuai syarat
+          if (checkMapper != null) {
+            return checkMapper;
+          }
+
+          /// Uraikan data menjadi sebuah hasil yang diinginkan [List<O>]
+          var result =
+              List<O>.from((data.data).map((u) => mapperObjectFromList!(u)))
+                  as L;
+          statusRequestModel =
+              StatusRequestModel<L>.success(result, message: data.message);
+          if (onSuccess != null) {
+            onSuccess(statusRequestModel);
+          }
         }
       } else {
         /// Cek mapperObject null atau tidak
@@ -338,6 +364,7 @@ class Repository {
     required int type,
     L Function(Map<String, dynamic>)? mapperObject,
     O Function(Map<String, dynamic>)? mapperObjectFromList,
+    L Function(Iterable<dynamic>)? mapperObjectFromListPrimitive,
     Function(StatusRequestModel<L> result)? onError,
   }) {
     var result = StatusRequestModel<L>.error(
@@ -350,7 +377,7 @@ class Repository {
       } else {
         return null;
       }
-    } else {
+    } else if (type == 2) {
       if (mapperObject == null) {
         result.failure?.msgShow = "mapperObject can't null";
         if (onError != null) onError(result);
@@ -358,6 +385,16 @@ class Repository {
       } else {
         return null;
       }
+    } else if (type == 3) {
+      if (mapperObjectFromListPrimitive == null) {
+        result.failure?.msgShow = "mapperObjectFromListPrimitive can't null";
+        if (onError != null) onError(result);
+        return result;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 }

@@ -28,9 +28,25 @@ class HomeController extends GetxController {
     repository.get<List<ExampleModel>, ExampleModel>(
       options: RepositoryOptions(
         endpoint: "api/test-get-list",
-        query: {"success": true},
+        query: {},
         data: {},
         mapperObjectFromList: ExampleModel.fromJson,
+        onLoading: (data, isLoading) {},
+        onSuccess: (data) {},
+        onError: (data) {},
+        onSendProgress: (count, total) {},
+        onReceiveProgress: (count, total) {},
+      ),
+    );
+  }
+
+  testListGetSingle() {
+    repository.get<List<String>, String>(
+      options: RepositoryOptions(
+        endpoint: "api/test-get-list-single",
+        query: {},
+        data: {},
+        mapperObjectFromListPrimitive: List<String>.from,
         onLoading: (data, isLoading) {},
         onSuccess: (data) {},
         onError: (data) {},
